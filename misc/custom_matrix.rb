@@ -56,16 +56,3 @@ class CustomMatrix
     item
   end
 end
-
-# Class initialization and calling
-input_matrix = Matrix[
-  [[], [true], [], []],
-  [[true], [], [true], [true]],
-  [[], [true], [], [true]],
-  [[], [true], [true], []]
-]
-
-my_custom_matrix = CustomMatrix.new(input_matrix)
-resulting_matrix = my_custom_matrix.power_set(3)
-puts '*** Result ***'
-my_custom_matrix.print(resulting_matrix)
