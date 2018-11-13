@@ -17,31 +17,54 @@ class GreedyAlgorithm
   end
 
   def apply
-    array_matrix = @resulting_matrix.to_a
-    remove_paths_with_present_node!(array_matrix)
-    return if array_matrix.all?(&:empty?)
+    k = @number_resources
+    1.upto(k) do |i|
+      list_paths = @resulting_matrix.to_a
+      remove_paths_with_i_resources!(list_paths, i)
+      p 'lists'
+      p list_paths
+      sub_solution_one_resource(list_paths)
+    end
+  end
 
-    @dispatched_nodes << find_most_frequent_value(array_matrix)
-    apply
+  def remove_paths_with_i_resources!(list_paths, i_resources)
+    # remove empty paths
+    list_paths.each { |paths| paths.reject!(&:empty?) }
+    return if @dispatched_nodes.empty?
+
+    list_paths.each do |paths|
+      paths.each do |path|
+        path.reject! { |x| (x & @dispatched_nodes).count == i_resources }
+      end
+      paths.reject!(&:empty?)
+    end
   end
 
   def print_result
     puts 'Original Matrix'
     puts @my_custom_matrix.print_original_matrix
-
     puts "Dispatch nodes in: #{@dispatched_nodes}"
   end
 
   private
 
-  def remove_paths_with_present_node!(array_matrix)
-    array_matrix = array_matrix.each do |a|
-      a.reject! do |x|
-        (x.first & @dispatched_nodes).count != 0 if x != []
+  def sub_solution_one_resource(matrix)
+    array_matrix = matrix
+    remove_paths_with_present_node!(array_matrix)
+    return if array_matrix.all?(&:empty?)
+
+    @dispatched_nodes << find_most_frequent_value(array_matrix)
+    sub_solution_one_resource(matrix)
+  end
+
+  def remove_paths_with_present_node!(list_paths)
+    # TODO : code duplication. Use blocks and "yield"
+    list_paths.each do |paths|
+      paths.each do |path|
+        path.select! { |x| (x & @dispatched_nodes).count.zero? }
       end
-      a.reject!(&:empty?)
+      paths.reject!(&:empty?)
     end
-    array_matrix
   end
 
   def find_most_frequent_value(array_matrix)
@@ -56,15 +79,27 @@ class GreedyAlgorithm
 end
 
 # Class initialization and calling
+=begin
 input_matrix = Matrix[
   [0, 1, 0, 0],
   [1, 0, 1, 1],
   [0, 1, 0, 1],
   [0, 1, 1, 0]
 ]
+=end
+
+input_matrix = Matrix[
+  [0, 1, 1, 0, 1, 0, 0],
+  [1, 0, 0, 1, 1, 1, 1],
+  [1, 0, 0, 1, 1, 0, 1],
+  [0, 1, 1, 0, 0, 0, 0],
+  [1, 1, 1, 0, 0, 0, 1],
+  [0, 1, 0, 0, 0, 0, 1],
+  [0, 1, 1, 0, 1, 1, 0]
+]
 algorithm = GreedyAlgorithm.new(input_matrix,
-                                path_length: 3,
-                                number_resources: 1,
-                                cycles: false)
+                                path_length: 5,
+                                number_resources: 2,
+                                cycles: true)
 algorithm.apply
 algorithm.print_result
