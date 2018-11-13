@@ -5,8 +5,13 @@ class CustomMatrix
     @original = matrix
     @row_count = @original.row_count
     @column_count = @original.column_count
-    @multiply_matrix = @original
+    @adapted_original = adapt_input_matrix(matrix)
+    @multiply_matrix = @adapted_original
     @cycles = cycles
+  end
+
+  def print_original_matrix
+    print(@original)
   end
 
   def print(matrix)
@@ -21,6 +26,16 @@ class CustomMatrix
   end
 
   private
+
+  def adapt_input_matrix(matrix)
+    Matrix.build(@row_count, @column_count) do |row, col|
+      if matrix[row, col].zero?
+        []
+      else
+        [true]
+      end
+    end
+  end
 
   # https://github.com/ruby/matrix/blob/master/lib/matrix.rb#L893
   def multiplication
@@ -38,13 +53,13 @@ class CustomMatrix
   end
 
   def compute_power(index_i, index_j, index_k, vij)
-    multiply_matrix_values = @multiply_matrix[index_i, index_k]
-    val = if @original[index_k, index_j] == [] || multiply_matrix_values.empty?
+    mult_values = @multiply_matrix[index_i, index_k]
+    val = if @adapted_original[index_k, index_j] == [] || mult_values.empty?
             []
-          elsif multiply_matrix_values == [true]
+          elsif mult_values == [true]
             [[index_k + 1]]
           else
-            multiply_matrix_values.map { |i| i + [index_k + 1] }
+            mult_values.map { |i| i + [index_k + 1] }
           end
     vij.concat(val)
   end

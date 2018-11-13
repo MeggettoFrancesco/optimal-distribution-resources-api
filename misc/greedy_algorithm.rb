@@ -19,15 +19,15 @@ class GreedyAlgorithm
   def apply
     array_matrix = @resulting_matrix.to_a
     remove_paths_with_present_node!(array_matrix)
-    return if array_matrix.all? { |x| x.empty? }
+    return if array_matrix.all?(&:empty?)
 
     @dispatched_nodes << find_most_frequent_value(array_matrix)
     apply
   end
 
   def print_result
-    puts "Original Matrix"
-    puts @my_custom_matrix.print(@resulting_matrix)
+    puts 'Original Matrix'
+    puts @my_custom_matrix.print_original_matrix
 
     puts "Dispatch nodes in: #{@dispatched_nodes}"
   end
@@ -45,19 +45,22 @@ class GreedyAlgorithm
   end
 
   def find_most_frequent_value(array_matrix)
-    freq = array_matrix.flatten.inject(Hash.new(0)) { |h, v| h[v] += 1; h }
+    freq = array_matrix.flatten.each_with_object(Hash.new(0)) do |v, h|
+      h[v] += 1
+      h
+    end
     max = freq.values.max
-    top_finds = freq.select { |k, f| f == max }
+    top_finds = freq.select { |_, f| f == max }
     top_finds.keys.sample
   end
 end
 
 # Class initialization and calling
 input_matrix = Matrix[
-  [[], [true], [], []],
-  [[true], [], [true], [true]],
-  [[], [true], [], [true]],
-  [[], [true], [true], []]
+  [0, 1, 0, 0],
+  [1, 0, 1, 1],
+  [0, 1, 0, 1],
+  [0, 1, 1, 0]
 ]
 algorithm = GreedyAlgorithm.new(input_matrix,
                                 path_length: 3,
