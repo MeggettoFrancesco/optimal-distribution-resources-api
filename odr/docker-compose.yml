@@ -1,0 +1,52 @@
+# Development environment
+version: '2'
+services:
+  db:
+    image: mysql:5.7
+    environment:
+      MYSQL_ROOT_PASSWORD: 'root'
+      MYSQL_USER: 'odr'
+      MYSQL_PASSWORD: 'odr'
+
+  redis:
+    image: redis:3-alpine
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    environment:
+      RAILS_ENV: development
+      RACK_ENV: development
+      DATABASE_POOL: 30
+      REDIS_URL: redis://redis
+    volumes:
+      - ./:/app
+    ports:
+      - "3000:3000"
+    links:
+      - db
+      - redis
+    depends_on:
+      - db
+      - redis
+    command: bundle exec puma
+
+  sidekiq:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    volumes:
+      - ./:/app
+    environment:
+      RAILS_ENV: development
+      RACK_ENV: development
+      DATABASE_POOL: 30
+      REDIS_URL: redis://redis
+    links:
+      - db
+      - redis
+    depends_on:
+      - db
+      - redis
+    command: bundle exec sidekiq

@@ -1,0 +1,22 @@
+.git
+.gitignore
+README.md
+
+# Ignore bundler config.
+/.bundle
+
+/log/*
+/tmp/*
+!/log/.keep
+!/tmp/.keep
+
+# Ignore SimpleCov's coverage folder
+/coverage
+
+# Ignore uploads
+/public/uploads
+/public/assets
+
+.env
+/yarn-error.log
+.byebug_history
