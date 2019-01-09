@@ -9,6 +9,8 @@ gem 'sidekiq'
 
 group :development, :test do
   gem 'byebug', platforms: %i[mri mingw x64_mingw]
+  gem 'factory_bot_rails'
+  gem 'faker'
   gem 'rubocop', '~> 0.62.0'
   gem 'simplecov'
 end
