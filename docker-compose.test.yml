@@ -1,0 +1,48 @@
+# Test environment
+version: '2'
+services:
+  db:
+    image: mysql:5.7
+    environment:
+      MYSQL_ROOT_PASSWORD: 'root'
+      MYSQL_USER: 'odr-api'
+      MYSQL_PASSWORD: 'odr-api'
+
+  redis:
+    image: redis:3-alpine
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    environment:
+      RAILS_ENV: development
+      RACK_ENV: development
+      DATABASE_POOL: 30
+      REDIS_URL: redis://redis
+    ports:
+      - "8080:8080"
+    links:
+      - db
+      - redis
+    depends_on:
+      - db
+      - redis
+    command: bundle exec puma
+
+  sidekiq:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    environment:
+      RAILS_ENV: development
+      RACK_ENV: development
+      DATABASE_POOL: 30
+      REDIS_URL: redis://redis
+    links:
+      - db
+      - redis
+    depends_on:
+      - db
+      - redis
+    command: bundle exec sidekiq
