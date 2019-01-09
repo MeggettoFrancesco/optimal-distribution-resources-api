@@ -21,7 +21,7 @@ services:
       DATABASE_POOL: 30
       REDIS_URL: redis://redis
     ports:
-      - "8080:8080"
+      - "3001:3001"
     links:
       - db
       - redis

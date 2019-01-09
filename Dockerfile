@@ -25,9 +25,9 @@ ADD . /app
 # Precompile Rails assets
 RUN bundle exec rake assets:precompile
 
-# Expose port 8080 to the Docker host, so we can access it
+# Expose port 3001 to the Docker host, so we can access it
 # from the outside.
-EXPOSE 8080
+EXPOSE 3001
 
 # Start puma
 CMD bundle exec puma
