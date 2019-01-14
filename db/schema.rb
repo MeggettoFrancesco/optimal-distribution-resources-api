@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_01_09_144218) do
+ActiveRecord::Schema.define(version: 2019_01_14_154534) do
 
   create_table "active_admin_comments", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "namespace"
@@ -39,8 +39,23 @@ ActiveRecord::Schema.define(version: 2019_01_09_144218) do
   end
 
   create_table "greedy_algorithms", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.string "input_matrix"
+    t.integer "path_length"
+    t.integer "number_resources"
+    t.boolean "cycles"
+    t.string "solution"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "request_id"
+    t.index ["request_id"], name: "index_greedy_algorithms_on_request_id"
+  end
+
+  create_table "requests", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.string "ip_address"
+    t.string "request_type"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
 
+  add_foreign_key "greedy_algorithms", "requests", on_delete: :cascade
 end

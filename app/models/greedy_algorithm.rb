@@ -1,30 +1,38 @@
-class GreedyAlgorithm #< ApplicationRecord
-  def initialize(matrix, path_length: 5, number_resources: 1, cycles: false)
-    @path_length = matrix[:path_length]
-    @number_resources = matrix[:number_resources]
-    @cycles = matrix[:cycles]
-    @my_custom_matrix = CustomMatrix.new(matrix[:matrix], cycles: @cycles)
-    @resulting_matrix = @my_custom_matrix.power_set(@path_length)
-    @solution = []
+class GreedyAlgorithm < ApplicationRecord
+  belongs_to :request
+
+  serialize :input_matrix
+  serialize :solution
+
+  after_initialize :create_resulting_matrix, if: :new_record?
+  after_initialize :set_default_solution_value, if: :new_record?
+
+  before_create :apply_algorithm
+
+  private
+
+  def create_resulting_matrix
+    matrix_object = Matrix.rows(input_matrix)
+    @my_custom_matrix = CustomMatrix.new(matrix_object, cycles: cycles)
+    @resulting_matrix = @my_custom_matrix.power_set(path_length)
   end
 
-  def apply
+  def set_default_solution_value
+    self.solution = []
+  end
+
+  def apply_algorithm
     list_paths = retrieve_paths
     # add first K most frequent nodes in @solution
-    s_nodes = find_most_frequent_nodes(list_paths, @number_resources)
-    @solution.concat(s_nodes)
+    s_nodes = find_most_frequent_nodes(list_paths, number_resources)
+    solution.concat(s_nodes)
 
     until list_paths.empty?
       remove_paths!(list_paths)
       node = find_most_frequent_nodes(list_paths, 1)
-      @solution.concat(node) unless node.nil?
+      solution.concat(node) if node.present?
     end
-
-    # Return result
-    @solution
   end
-
-  private
 
   def retrieve_paths
     list_paths = @resulting_matrix.to_a
@@ -33,11 +41,11 @@ class GreedyAlgorithm #< ApplicationRecord
   end
 
   def remove_paths!(list_paths)
-    # remove paths in L containing K vertices in @solution as well as removing
+    # remove paths in L containing K vertices in solution as well as removing
     # empty paths. This will speed up the process in the long run
     new_paths = list_paths.each do |paths|
       paths.each do |path|
-        path.reject! { |x| (x & @solution).count == @number_resources }
+        path.reject! { |x| (x & solution).count == number_resources }
       end
       paths.reject!(&:empty?)
     end

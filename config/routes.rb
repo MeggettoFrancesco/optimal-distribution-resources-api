@@ -4,7 +4,7 @@ Rails.application.routes.draw do
 
   namespace :api do
     namespace :v1 do
-      resources :greedy_algorithms, only: :index
+      resources :requests, only: :index
     end
   end
 end

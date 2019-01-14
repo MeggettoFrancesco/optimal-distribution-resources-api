@@ -2,6 +2,7 @@ source 'https://rubygems.org'
 
 gem 'activeadmin'
 gem 'devise'
+gem 'enumerize'
 gem 'mysql2', '>= 0.4.4', '< 0.6.0'
 gem 'puma', '~> 3.11'
 gem 'rails', '~> 5.2.2'
