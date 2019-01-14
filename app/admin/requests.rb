@@ -8,7 +8,7 @@ ActiveAdmin.register Request do
   filter :created_at
   filter :updated_at
 
-  index do |r|
+  index do
     selectable_column
     id_column
     column :request_type
@@ -18,7 +18,7 @@ ActiveAdmin.register Request do
     actions
   end
 
-  form do |f|
+  form do
     f.inputs do
       f.input :ip_address
     end

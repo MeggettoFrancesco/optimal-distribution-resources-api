@@ -8,7 +8,7 @@ ActiveAdmin.register GreedyAlgorithm do
   filter :created_at
   filter :updated_at
 
-  index do |r|
+  index do
     selectable_column
     id_column
     column :input_matrix
@@ -22,7 +22,7 @@ ActiveAdmin.register GreedyAlgorithm do
     actions
   end
 
-  show do |r|
+  show do
     attributes_table do
       row :id
       row :input_matrix

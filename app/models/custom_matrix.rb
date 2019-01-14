@@ -1,5 +1,3 @@
-require 'matrix'
-
 class CustomMatrix
   def initialize(matrix, cycles: false)
     @original = matrix
