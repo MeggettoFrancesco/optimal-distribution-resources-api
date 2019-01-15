@@ -1,3 +1,5 @@
+require 'matrix'
+
 class GreedyAlgorithm < ApplicationRecord
   belongs_to :request
 
