@@ -15,11 +15,13 @@ class Api::V1::RequestsController < ApiController
   def show
     # TODO : check if worker finished
     my_request = Request.find_by(id: params[:id])
-    not_found_message = 'request not found'
-    return render json: json_error(not_found_message) unless my_request.present?
 
-    solution = my_request.send(my_request.request_type).solution
-    render json: { result: solution }
+    if my_request.present?
+      solution = my_request.send(my_request.request_type).solution
+      render json: json_ok(:result, solution)
+    else
+      render json: json_error('request not found')
+    end
   end
 
   private
@@ -36,7 +38,7 @@ class Api::V1::RequestsController < ApiController
   def save_and_render(my_algorithm)
     if my_algorithm.save
       my_algorithm.compute_solution
-      render json: { request_uuid: my_algorithm.request.id }
+      render json: json_ok(:request_uuid, my_algorithm.request.id)
     else
       render json: json_error(my_algorithm.errors)
     end
@@ -56,6 +58,10 @@ class Api::V1::RequestsController < ApiController
     return unless input_matrix.present?
 
     parameters[:algorithm_parameters][:input_matrix] = JSON.parse(input_matrix)
+  end
+
+  def json_ok(attribute, message)
+    { status: 'ok', code: 200, attribute => message }
   end
 
   def json_error(message)
