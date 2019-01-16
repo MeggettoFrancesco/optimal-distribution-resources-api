@@ -3,6 +3,7 @@ class Request < ApplicationRecord
 
   has_one :greedy_algorithm
 
-  # TODO : add new request_type(s) here. Only greedy for now
   enumerize :request_type, in: %i[greedy_algorithm]
+
+  validates :request_type, presence: true
 end
