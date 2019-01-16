@@ -13,8 +13,10 @@ class Api::V1::RequestsController < ApiController
   end
 
   def show
+    # TODO : check if worker finished
     my_request = Request.find_by(id: params[:id])
-    render json: { result: my_request.send(my_request.request_type).solution }
+    solution = my_request.send(my_request.request_type).solution
+    render json: json_result(solution)
   end
 
   private
@@ -31,14 +33,10 @@ class Api::V1::RequestsController < ApiController
   def save_and_render(my_algorithm)
     if my_algorithm.save
       my_algorithm.compute_solution
-      render json: { result: my_algorithm.request.id }
+      render json: json_result(my_algorithm.request.id)
     else
       render json: json_error(my_algorithm.errors)
     end
-  end
-
-  def json_error(message)
-    { status: 'error', code: 400, message: message }
   end
 
   def request_params
@@ -55,6 +53,14 @@ class Api::V1::RequestsController < ApiController
     return unless input_matrix.present?
 
     parameters[:algorithm_parameters][:input_matrix] = JSON.parse(input_matrix)
+  end
+
+  def json_result(message)
+    { result: message }
+  end
+
+  def json_error(message)
+    { status: 'error', code: 400, message: message }
   end
 
   def algorithm_parameters
