@@ -28,9 +28,14 @@ class Api::V1::RequestsController < ApiController
     parameters = params.require(:request)
                        .permit(:request_type,
                                algorithm_parameters: algorithm_parameters)
-    input_matrix = parameters[:algorithm_parameters][:input_matrix]
-    parameters[:algorithm_parameters][:input_matrix] = JSON.parse(input_matrix)
+    parse_input_matrix!(parameters)
     parameters
+  end
+
+  def parse_input_matrix!(parameters)
+    input_matrix = parameters[:algorithm_parameters][:input_matrix]
+    return unless input_matrix.present?
+    parameters[:algorithm_parameters][:input_matrix] = JSON.parse(input_matrix)
   end
 
   def algorithm_parameters

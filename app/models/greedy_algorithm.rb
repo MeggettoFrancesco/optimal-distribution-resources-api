@@ -6,8 +6,15 @@ class GreedyAlgorithm < ApplicationRecord
   serialize :input_matrix
   serialize :solution
 
-  after_initialize :create_resulting_matrix, if: :new_record?
-  after_initialize :set_default_solution_value, if: :new_record?
+  validates :input_matrix, presence: true
+  validates :path_length, presence: true,
+                          numericality: { greater_than_or_equal_to: 1 }
+  validates :number_resources, presence: true,
+                               numericality: { greater_than_or_equal_to: 1 }
+  validates :cycles, inclusion: { in: [true, false] }
+
+  before_create :create_resulting_matrix, if: :new_record?
+  before_create :set_default_solution_value, if: :new_record?
 
   before_create :apply_algorithm
 
