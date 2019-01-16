@@ -15,6 +15,9 @@ class Api::V1::RequestsController < ApiController
   def show
     # TODO : check if worker finished
     my_request = Request.find_by(id: params[:id])
+    not_found_message = 'request not found'
+    return render json: json_error(not_found_message) unless my_request.present?
+
     solution = my_request.send(my_request.request_type).solution
     render json: { result: solution }
   end
