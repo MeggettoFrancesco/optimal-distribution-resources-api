@@ -46,11 +46,11 @@ ActiveRecord::Schema.define(version: 2019_01_14_154534) do
     t.string "solution"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.bigint "request_id"
-    t.index ["request_id"], name: "index_greedy_algorithms_on_request_id"
+    t.string "request_id"
+    t.index ["request_id"], name: "fk_rails_962f42bf39"
   end
 
-  create_table "requests", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "requests", id: :string, limit: 36, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "ip_address"
     t.string "request_type"
     t.datetime "created_at", null: false

@@ -12,6 +12,11 @@ class Api::V1::RequestsController < ApiController
     save_and_render(my_algorithm)
   end
 
+  def show
+    my_request = Request.find_by(id: params[:id])
+    render json: { result: my_request.send(my_request.request_type).solution }
+  end
+
   private
 
   def create_request(my_params)
@@ -25,7 +30,8 @@ class Api::V1::RequestsController < ApiController
 
   def save_and_render(my_algorithm)
     if my_algorithm.save
-      render json: { result: my_algorithm.solution }
+      my_algorithm.compute_solution
+      render json: { result: my_algorithm.request.id }
     else
       render json: json_error(my_algorithm.errors)
     end

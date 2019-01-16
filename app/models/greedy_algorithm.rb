@@ -13,24 +13,16 @@ class GreedyAlgorithm < ApplicationRecord
                                numericality: { greater_than_or_equal_to: 1 }
   validates :cycles, inclusion: { in: [true, false] }
 
-  before_create :create_resulting_matrix, if: :new_record?
   before_create :set_default_solution_value, if: :new_record?
 
-  before_create :apply_algorithm
+  def compute_solution
+    ExecuteAlgorithmWorker.perform_async(id, self.class)
+  end
 
   private
 
-  def create_resulting_matrix
-    matrix_object = Matrix.rows(input_matrix)
-    @my_custom_matrix = CustomMatrix.new(matrix_object, cycles: cycles)
-    @resulting_matrix = @my_custom_matrix.power_set(path_length)
-  end
-
-  def set_default_solution_value
-    self.solution = []
-  end
-
   def apply_algorithm
+    create_resulting_matrix
     list_paths = retrieve_paths
     # add first K most frequent nodes in @solution
     s_nodes = find_most_frequent_nodes(list_paths, number_resources)
@@ -41,6 +33,16 @@ class GreedyAlgorithm < ApplicationRecord
       node = find_most_frequent_nodes(list_paths, 1)
       solution.concat(node) if node.present?
     end
+  end
+
+  def create_resulting_matrix
+    matrix_object = Matrix.rows(input_matrix)
+    @my_custom_matrix = CustomMatrix.new(matrix_object, cycles: cycles)
+    @resulting_matrix = @my_custom_matrix.power_set(path_length)
+  end
+
+  def set_default_solution_value
+    self.solution = []
   end
 
   def retrieve_paths
