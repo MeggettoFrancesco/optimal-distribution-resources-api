@@ -13,12 +13,12 @@ class Api::V1::RequestsController < ApiController
   end
 
   def show
-    # TODO : check if worker finished
     my_request = Request.find_by(id: params[:id])
 
     if my_request.present?
       solution = my_request.send(my_request.request_type).solution
-      render json: json_ok(:result, solution)
+      answer = solution.present? ? solution : "I'm still computing..."
+      render json: json_ok(:result, answer)
     else
       render json: json_error('request not found')
     end
@@ -65,7 +65,7 @@ class Api::V1::RequestsController < ApiController
   end
 
   def json_error(message)
-    { status: 'error', code: 400, message: message }
+    { status: 'error', code: 404, message: message }
   end
 
   def algorithm_parameters
