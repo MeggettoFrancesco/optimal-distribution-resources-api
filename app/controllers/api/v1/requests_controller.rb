@@ -1,6 +1,6 @@
 class Api::V1::RequestsController < ApiController
   # TODO : test and fix when json doesn't include request for example
-  def index
+  def create
     my_params = request_params
     my_request = create_request(my_params)
     return render json: json_error(my_request.errors) if my_request.invalid?
@@ -16,7 +16,7 @@ class Api::V1::RequestsController < ApiController
     # TODO : check if worker finished
     my_request = Request.find_by(id: params[:id])
     solution = my_request.send(my_request.request_type).solution
-    render json: json_result(solution)
+    render json: { result: solution }
   end
 
   private
@@ -33,7 +33,7 @@ class Api::V1::RequestsController < ApiController
   def save_and_render(my_algorithm)
     if my_algorithm.save
       my_algorithm.compute_solution
-      render json: json_result(my_algorithm.request.id)
+      render json: { request_uuid: my_algorithm.request.id }
     else
       render json: json_error(my_algorithm.errors)
     end
@@ -53,10 +53,6 @@ class Api::V1::RequestsController < ApiController
     return unless input_matrix.present?
 
     parameters[:algorithm_parameters][:input_matrix] = JSON.parse(input_matrix)
-  end
-
-  def json_result(message)
-    { result: message }
   end
 
   def json_error(message)
