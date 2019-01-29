@@ -3,14 +3,14 @@ require 'matrix'
 class GreedyAlgorithm < ApplicationRecord
   belongs_to :request
 
-  serialize :input_matrix
   serialize :solution
 
   validates :input_matrix, presence: true
   validates :path_length, presence: true,
                           numericality: { greater_than_or_equal_to: 1 }
   validates :number_resources, presence: true,
-                               numericality: { greater_than_or_equal_to: 1 }
+                               numericality: { greater_than_or_equal_to: 1,
+                                               less_than: :path_length }
   validates :cycles, inclusion: { in: [true, false] }
 
   def compute_solution
@@ -35,7 +35,7 @@ class GreedyAlgorithm < ApplicationRecord
   end
 
   def create_resulting_matrix
-    matrix_object = Matrix.rows(input_matrix)
+    matrix_object = Matrix.rows(JSON.parse(input_matrix))
     @my_custom_matrix = CustomMatrix.new(matrix_object, cycles: cycles)
     @resulting_matrix = @my_custom_matrix.power_set(path_length)
   end
@@ -59,24 +59,25 @@ class GreedyAlgorithm < ApplicationRecord
   end
 
   def find_most_frequent_nodes(list_paths, n_resources)
+    return unless list_paths.present?
+
     frequencies = frequency_hash(list_paths)
-    top_vals = frequencies.values.max_by(n_resources) { |i| i }
-    most_frequent_nodes(frequencies, top_vals)
+    return unless frequencies.present?
+
+    top_vals = []
+    (1..n_resources).each do
+      top_vals << frequencies.max_by { |_, v| v }[0]
+      frequencies.reject! { |k, _| top_vals.include?(k) }
+    end
+
+    top_vals
   end
 
   def frequency_hash(list_paths)
-    list_paths.flatten.each_with_object(Hash.new(0)) do |val, hash|
+    without_solution = list_paths.flatten - solution
+    without_solution.flatten.each_with_object(Hash.new(0)) do |val, hash|
       hash[val] += 1
       hash
     end
-  end
-
-  def most_frequent_nodes(frequencies, top_values)
-    most_frequent_nodes = []
-    top_values.each do |value|
-      top_finds = frequencies.select { |_, frequency| frequency == value }
-      most_frequent_nodes << top_finds.keys.first
-    end
-    most_frequent_nodes
   end
 end

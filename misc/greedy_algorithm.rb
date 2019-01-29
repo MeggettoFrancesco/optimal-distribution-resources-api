@@ -1,11 +1,8 @@
 require 'matrix'
 require_relative 'custom_matrix'
 
-require 'byebug'
-require 'rubocop'
-
 class GreedyAlgorithm
-  def initialize(matrix, path_length: 5, number_resources: 1, cycles: false)
+  def initialize(matrix, path_length: 3, number_resources: 1, cycles: false)
     @path_length = path_length
     @number_resources = number_resources
     @cycles = cycles
@@ -54,39 +51,83 @@ class GreedyAlgorithm
   end
 
   def find_most_frequent_nodes(list_paths, n_resources)
+    return if list_paths.empty?
+
     frequencies = frequency_hash(list_paths)
-    top_vals = frequencies.values.max_by(n_resources) { |i| i }
-    most_frequent_nodes(frequencies, top_vals)
+    return if frequencies.empty?
+
+    top_vals = []
+    (1..n_resources).each do
+      top_vals << frequencies.max_by { |_, v| v }[0]
+      frequencies.reject! { |k, _| top_vals.include?(k) }
+    end
+
+    top_vals
   end
 
   def frequency_hash(list_paths)
-    list_paths.flatten.each_with_object(Hash.new(0)) do |val, hash|
+    without_solution = list_paths.flatten - @solution
+    without_solution.each_with_object(Hash.new(0)) do |val, hash|
       hash[val] += 1
       hash
     end
   end
-
-  def most_frequent_nodes(frequencies, top_values)
-    most_frequent_nodes = []
-    top_values.each do |value|
-      top_finds = frequencies.select { |_, frequency| frequency == value }
-      most_frequent_nodes << top_finds.keys.first
-    end
-    most_frequent_nodes
-  end
 end
 
 # Class initialization and calling
-input_matrix = Matrix[
-  [0, 1, 0, 0],
-  [1, 0, 1, 1],
-  [0, 1, 0, 1],
-  [0, 1, 1, 0]
+# input_matrix = Matrix[
+#   [0, 1, 0, 0],
+#   [1, 0, 1, 1],
+#   [0, 1, 0, 1],
+#   [0, 1, 1, 0]
+# ]
+
+# First case
+# first_input_matrix = Matrix[
+#   [0, 1, 1, 0, 0, 0],
+#   [1, 0, 0, 1, 0, 0],
+#   [1, 0, 0, 1, 1, 0],
+#   [0, 1, 1, 0, 0, 1],
+#   [0, 0, 1, 0, 0, 1],
+#   [0, 0, 0, 1, 1, 0]
+# ]
+
+# Second case
+# second_input_matrix = Matrix[
+#   [0, 1, 1, 0, 0],
+#   [1, 0, 0, 1, 0],
+#   [1, 0, 0, 1, 1],
+#   [0, 1, 1, 0, 0],
+#   [0, 0, 1, 0, 0]
+# ]
+
+# Third case
+third_input_matrix = Matrix[
+  [0, 1, 1, 0, 0, 0, 0, 0],
+  [1, 0, 0, 1, 0, 0, 0, 0],
+  [1, 0, 0, 1, 1, 0, 0, 0],
+  [0, 1, 1, 0, 0, 1, 0, 0],
+  [0, 0, 1, 0, 0, 1, 1, 0],
+  [0, 0, 0, 1, 1, 0, 0, 1],
+  [0, 0, 0, 0, 1, 0, 0, 1],
+  [0, 0, 0, 0, 0, 1, 1, 0]
 ]
 
-algorithm = GreedyAlgorithm.new(input_matrix,
+# Fourth case
+# fourth_input_matrix = Matrix[
+#   [0, 1, 0, 1, 0, 0, 0],
+#   [1, 0, 1, 1, 0, 0, 0],
+#   [0, 1, 0, 0, 0, 0, 1],
+#   [1, 1, 0, 0, 0, 0, 0],
+#   [0, 0, 0, 0, 0, 1, 0],
+#   [0, 1, 0, 0, 1, 0, 1],
+#   [0, 0, 1, 0, 0, 1, 0]
+# ]
+
+# number_resources should bw < than path_length
+algorithm = GreedyAlgorithm.new(third_input_matrix,
                                 path_length: 3,
-                                number_resources: 1,
-                                cycles: false)
+                                number_resources: 2,
+                                cycles: true)
 algorithm.apply
 algorithm.print_result
