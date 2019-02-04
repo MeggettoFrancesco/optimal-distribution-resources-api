@@ -11,7 +11,9 @@ ActiveAdmin.register GreedyAlgorithm do
   index do
     selectable_column
     id_column
-    column :input_matrix
+    column :input_matrix do |my_resource|
+      truncate(my_resource.input_matrix, length: 100)
+    end
     column :path_length
     column :number_resources
     column :cycles
