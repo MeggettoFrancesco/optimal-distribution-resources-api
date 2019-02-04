@@ -39,11 +39,11 @@ ActiveRecord::Schema.define(version: 2019_01_14_154534) do
   end
 
   create_table "greedy_algorithms", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
-    t.string "input_matrix"
+    t.text "input_matrix", limit: 4294967295
     t.integer "path_length"
     t.integer "number_resources"
     t.boolean "cycles"
-    t.string "solution"
+    t.text "solution", limit: 4294967295
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "request_id"
