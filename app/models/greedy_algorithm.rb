@@ -23,9 +23,10 @@ class GreedyAlgorithm < ApplicationRecord
     create_resulting_matrix
     self.solution = []
     list_paths = retrieve_paths
+    return unless list_paths.present?
+
     # add first K most frequent nodes in @solution
-    s_nodes = find_most_frequent_nodes(list_paths, number_resources)
-    solution.concat(s_nodes)
+    solution.concat(find_most_frequent_nodes(list_paths, number_resources))
 
     until list_paths.empty?
       remove_paths!(list_paths)
@@ -44,6 +45,8 @@ class GreedyAlgorithm < ApplicationRecord
     list_paths = @resulting_matrix.to_a
     # remove empty paths
     list_paths.each { |paths| paths.reject!(&:empty?) }
+    list_paths.reject!(&:empty?)
+    list_paths
   end
 
   def remove_paths!(list_paths)

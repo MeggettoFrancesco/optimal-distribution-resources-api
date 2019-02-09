@@ -13,6 +13,8 @@ class GreedyAlgorithm
 
   def apply
     list_paths = retrieve_paths
+    return if list_paths.empty?
+
     # add first K most frequent nodes in @solution
     s_nodes = find_most_frequent_nodes(list_paths, @number_resources)
     @solution.concat(s_nodes)
@@ -36,6 +38,8 @@ class GreedyAlgorithm
     list_paths = @resulting_matrix.to_a
     # remove empty paths
     list_paths.each { |paths| paths.reject!(&:empty?) }
+    list_paths.reject!(&:empty?)
+    list_paths
   end
 
   def remove_paths!(list_paths)

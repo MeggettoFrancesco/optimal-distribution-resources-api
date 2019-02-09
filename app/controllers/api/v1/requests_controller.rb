@@ -17,7 +17,7 @@ class Api::V1::RequestsController < ApiController
 
     if my_request.present?
       solution = my_request.send(my_request.request_type).solution
-      answer = solution.present? ? solution : "I'm still computing..."
+      answer = solution.nil? ? "I'm still computing..." : solution
       render json: json_ok(:result, answer)
     else
       render json: json_error('request not found')
