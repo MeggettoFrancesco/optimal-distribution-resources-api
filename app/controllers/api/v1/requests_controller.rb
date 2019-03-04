@@ -1,5 +1,4 @@
 class Api::V1::RequestsController < ApiController
-  # TODO : test and fix when json doesn't include request for example
   def create
     my_params = request_params
     my_request = create_request(my_params)
@@ -20,7 +19,7 @@ class Api::V1::RequestsController < ApiController
       answer = solution.nil? ? "I'm still computing..." : solution
       render json: json_ok(:result, answer)
     else
-      render json: json_error('request not found')
+      render json: json_error('Request not found')
     end
   end
 
@@ -45,7 +44,6 @@ class Api::V1::RequestsController < ApiController
   end
 
   def request_params
-    # TODO : provide default values
     parameters = params.require(:request)
                        .permit(:request_type,
                                algorithm_parameters: algorithm_parameters)
