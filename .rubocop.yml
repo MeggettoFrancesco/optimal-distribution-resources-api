@@ -74,6 +74,12 @@ Style/FrozenStringLiteralComment:
 Style/ClassAndModuleChildren:
   EnforcedStyle: compact
 
+# There is an issue with the Enumerize gem
+# Use #value? instead of #values.include?.
+# `assert Request.request_type.values.include?(@request.request_type)`
+Performance/InefficientHashSearch:
+  Enabled: false
+
 Metrics/BlockLength:
   Exclude:
     - "app/admin/**/*.rb"
