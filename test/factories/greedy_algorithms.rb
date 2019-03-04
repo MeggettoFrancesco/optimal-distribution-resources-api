@@ -1,8 +1,8 @@
 FactoryBot.define do
   factory :greedy_algorithm do
     input_matrix { create_matrix }
-    path_length { rand(3..10) }
-    number_resources { path_length - 1 }
+    path_length { [3, 4].sample }
+    number_resources { [1, 2].sample }
     cycles { Faker::Boolean.boolean }
   end
 end
@@ -10,7 +10,7 @@ end
 private
 
 def create_matrix
-  size = rand(4..25)
+  size = rand(4..7)
 
   Array.new(size) do |row|
     Array.new(size) do |col|
