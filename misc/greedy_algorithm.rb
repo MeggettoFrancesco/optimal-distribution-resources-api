@@ -48,6 +48,7 @@ class GreedyAlgorithm
     new_paths = list_paths.each do |paths|
       paths.each do |path|
         path.reject! { |x| (x & @solution).count == @number_resources }
+        path.reject!(&:empty?)
       end
       paths.reject!(&:empty?)
     end
@@ -79,59 +80,17 @@ class GreedyAlgorithm
 end
 
 # Class initialization and calling
-# input_matrix = Matrix[
-#   [0, 1, 0, 0],
-#   [1, 0, 1, 1],
-#   [0, 1, 0, 1],
-#   [0, 1, 1, 0]
-# ]
-
-# First case
-# first_input_matrix = Matrix[
-#   [0, 1, 1, 0, 0, 0],
-#   [1, 0, 0, 1, 0, 0],
-#   [1, 0, 0, 1, 1, 0],
-#   [0, 1, 1, 0, 0, 1],
-#   [0, 0, 1, 0, 0, 1],
-#   [0, 0, 0, 1, 1, 0]
-# ]
-
-# Second case
-# second_input_matrix = Matrix[
-#   [0, 1, 1, 0, 0],
-#   [1, 0, 0, 1, 0],
-#   [1, 0, 0, 1, 1],
-#   [0, 1, 1, 0, 0],
-#   [0, 0, 1, 0, 0]
-# ]
-
-# Third case
-third_input_matrix = Matrix[
-  [0, 1, 1, 0, 0, 0, 0, 0],
-  [1, 0, 0, 1, 0, 0, 0, 0],
-  [1, 0, 0, 1, 1, 0, 0, 0],
-  [0, 1, 1, 0, 0, 1, 0, 0],
-  [0, 0, 1, 0, 0, 1, 1, 0],
-  [0, 0, 0, 1, 1, 0, 0, 1],
-  [0, 0, 0, 0, 1, 0, 0, 1],
-  [0, 0, 0, 0, 0, 1, 1, 0]
+input_matrix = Matrix[
+  [0, 1, 1, 0, 0],
+  [1, 0, 0, 1, 0],
+  [1, 0, 0, 1, 1],
+  [0, 1, 1, 0, 0],
+  [0, 0, 1, 0, 0]
 ]
 
-# Fourth case
-# fourth_input_matrix = Matrix[
-#   [0, 1, 0, 1, 0, 0, 0],
-#   [1, 0, 1, 1, 0, 0, 0],
-#   [0, 1, 0, 0, 0, 0, 1],
-#   [1, 1, 0, 0, 0, 0, 0],
-#   [0, 0, 0, 0, 0, 1, 0],
-#   [0, 1, 0, 0, 1, 0, 1],
-#   [0, 0, 1, 0, 0, 1, 0]
-# ]
-
-# number_resources should bw < than path_length
-algorithm = GreedyAlgorithm.new(third_input_matrix,
+algorithm = GreedyAlgorithm.new(input_matrix,
                                 path_length: 3,
-                                number_resources: 2,
-                                cycles: true)
+                                number_resources: 1,
+                                cycles: false)
 algorithm.apply
 algorithm.print_result

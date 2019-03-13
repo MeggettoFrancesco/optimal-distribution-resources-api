@@ -12,6 +12,7 @@ class CustomMatrix
     return Matrix.build(@row_count, @column_count) { [] } if power == 1
 
     (2..power).each { @multiply_matrix = multiplication }
+    remove_potential_cycles unless @cycles
     @multiply_matrix
   end
 
@@ -31,11 +32,7 @@ class CustomMatrix
   def multiplication
     rows = Array.new(@row_count) do |i|
       Array.new(@column_count) do |j|
-        item = (0...@column_count).inject([]) do |vij, k|
-          compute_power(i, j, k, vij)
-        end
-        item = remove_potential_cycles(item, i, j) unless @cycles
-        item
+        (0...@column_count).inject([]) { |vij, k| compute_power(i, j, k, vij) }
       end
     end
 
@@ -54,10 +51,20 @@ class CustomMatrix
     vij.concat(val)
   end
 
-  def remove_potential_cycles(item, index_i, index_j)
-    item.each do |value|
-      item = [] if value.include?(index_i + 1) || value.include?(index_j + 1)
+  def remove_potential_cycles
+    array_matrix = @multiply_matrix.to_a
+    rows = Array.new(@row_count) do |i|
+      Array.new(@column_count) do |j|
+        remove_potential_cycles_for_item(array_matrix[i][j], i, j)
+      end
     end
-    item
+
+    Matrix.rows(rows)
+  end
+
+  def remove_potential_cycles_for_item(item, index_i, index_j)
+    item.collect! do |value|
+      value.include?(index_i + 1) || value.include?(index_j + 1) ? [] : value
+    end
   end
 end

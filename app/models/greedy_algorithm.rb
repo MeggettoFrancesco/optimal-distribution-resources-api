@@ -55,6 +55,7 @@ class GreedyAlgorithm < ApplicationRecord
     new_paths = list_paths.each do |paths|
       paths.each do |path|
         path.reject! { |x| (x & solution).count == number_resources }
+        path.reject!(&:empty?)
       end
       paths.reject!(&:empty?)
     end
